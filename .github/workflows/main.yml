@@ -23,7 +23,7 @@ jobs:
 
       - name: Set credentials file
         env: 
-          GOOGLE_CREDENTIALS: ${{ secrets.CREDENTIALS_GCLOUD }}
+          GOOGLE_CREDENTIALS: ${{ vars.CREDENTIALS_GCLOUD }}
         run: echo $GOOGLE_CREDENTIALS > gcloud-credentials.json
 
       - name: Authenticate with Google Cloud
