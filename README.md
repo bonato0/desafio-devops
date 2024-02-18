@@ -63,3 +63,57 @@ Use ferramentas e bibliotecas open source, mas documente as decisões e porquês
 Automatize o máximo possível;
 
 Em caso de dúvidas, pergunte.
+
+
+## Fluxo CI/CD
+
+# Armazenamento de Imagens Docker e Execução da API
+
+O Google Cloud foi selecionado como provedor de nuvem para armazenar as imagens Docker e hospedar a API.
+
+A API é implantada no Google Cloud Run, uma plataforma serverless para contêineres. Optou-se por esta ferramenta devido à simplicidade da API, que não requer um banco de dados para funcionar, e não exige uma infraestrutura robusta com recursos como ingress, além de escalar de forma saúdavel e dinâmica parecida com o scalling do K8S.
+
+# Ciclo de Build e Implantação
+
+A Build da API é automatizada e a imagem Docker resultante é enviada para o Google Artifact Registry. Esta decisão foi tomada devido à integração nativa do Google Cloud Run com o Artifact Registry. A identificação da versão da imagem Docker é feita através do hash do commit, garantindo rastreabilidade e consistência entre o código e a implantação.
+
+# Gerenciamento da Infraestrutura
+
+A infraestrutura é provisionada e gerenciada utilizando Terraform. O Terraform é responsável por criar e manter os recursos necessários, incluindo a configuração do Cloud Run com a imagem Docker associada ao commit mais recente. O estado da infraestrutura é armazenado de forma segura em um bucket do Google Cloud Storage.
+
+# Monitoramento e Observabilidade
+
+O sistema é monitorado utilizando Grafana, que está integrado com as métricas e logs do Google Cloud Platform. Isso permite o acompanhamento contínuo do desempenho da aplicação, bem como a detecção e resolução proativa de problemas.
+
+
+## Otimizações e Aperfeiçoamentos Futuros:
+
+Se houvesse mais tempo disponível, algumas melhorias e otimizações poderiam ser implementadas para aprimorar ainda mais a infraestrutura e os processos do projeto.
+
+# Gestão de Ambientes:
+
+Criar diferentes branches para ambientes de desenvolvimento, homologação e produção, juntamente com projetos separados na Cloud. Isso permitiria um gerenciamento mais eficaz e isolado de cada estágio do ciclo de vida da aplicação.
+
+# Melhorias no Processo de Implantação Contínua (CD) com ArgoCD:
+
+Introduzir o ArgoCD para automatizar e gerenciar o processo de implantação contínua. O ArgoCD é uma ferramenta de entrega contínua que opera no Kubernetes, permitindo a implantação de aplicações de forma declarativa a partir de definições de configuração gitops. Integrando o ArgoCD à pipeline de CI/CD, podemos alcançar uma implantação mais consistente, controlada e segura, garantindo que as atualizações sejam entregues de maneira confiável e automatizada.
+
+# Versionamento Semântico:
+
+Implementar o Semantic Versioning para um controle mais preciso das atualizações da aplicação. Isso proporcionaria uma melhor compreensão das mudanças introduzidas em cada versão e facilitaria o processo de release management.
+
+# Banco de Dados:
+
+Provisionar um banco de dados para armazenar os dados do Grafana e preparar para futuras necessidades de persistência de dados da API. Isso garantiria uma base sólida para escalabilidade e expansão futuras do sistema.
+
+# Personalização de Dashboards:
+
+Desenvolver dashboards personalizados no Grafana em vez de depender exclusivamente de modelos pré-definidos. Isso permitiria uma visualização mais específica e adaptada às necessidades do projeto, proporcionando insights mais relevantes. Além disso, configurar o Grafana para enviar alertas por e-mail e aplicativos de mensagens, como Slack ou Microsoft Teams. Essa funcionalidade garantiria uma resposta rápida a incidentes ou anomalias identificadas nas métricas monitoradas, permitindo uma abordagem proativa na resolução de problemas e na manutenção da integridade do sistema.
+
+# Pipeline de CI/CD Aprimorada:
+
+Refinar a pipeline de integração contínua e implantação contínua (CI/CD) para separar claramente as etapas de build e deploy. Isso aumentaria a flexibilidade e a confiabilidade do processo de entrega de software.
+
+# Gerenciamento de Acesso e Segurança:
+
+Implementar roles customizadas na pipeline para garantir uma autenticação e autorização adequadas durante o processo de build de contêineres e na interação com serviços na nuvem. Isso fortaleceria a segurança e o controle de acesso ao ambiente de desenvolvimento e implantação.
