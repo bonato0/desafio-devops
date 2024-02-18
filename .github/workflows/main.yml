@@ -22,7 +22,9 @@ jobs:
         run: pip install -r app/requirements.txt
 
       - name: Set credentials file
-        run: echo ${{ secrets.GCLOUD_CREDENTIALS }} > gcloud-credentials.json
+        env: 
+          GOOGLE_CREDENTIALS: ${{ secrets.CREDENTIALS_GCLOUD }}
+        run: echo $GOOGLE_CREDENTIALS > gcloud-credentials.json
 
       - name: Authenticate with Google Cloud
         run: gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
@@ -37,7 +39,8 @@ jobs:
 
       - name: Run Terraform 
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: gcloud-credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.CREDENTIALS_GCLOUD }}
         run: |
+          cd terraform
           terraform init
           terraform apply -auto-approve -var commit_hash=${{ github.sha }}
