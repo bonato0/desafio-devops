@@ -65,7 +65,7 @@ Automatize o máximo possível;
 Em caso de dúvidas, pergunte.
 
 
-## Fluxo CI/CD
+# Fluxo CI/CD
 
 # Armazenamento de Imagens Docker e Execução da API
 
@@ -86,7 +86,7 @@ A infraestrutura é provisionada e gerenciada utilizando Terraform. O Terraform 
 O sistema é monitorado utilizando Grafana, que está integrado com as métricas e logs do Google Cloud Platform. Isso permite o acompanhamento contínuo do desempenho da aplicação, bem como a detecção e resolução proativa de problemas.
 
 
-## Otimizações e Aperfeiçoamentos Futuros:
+# Otimizações e Aperfeiçoamentos Futuros:
 
 Se houvesse mais tempo disponível, algumas melhorias e otimizações poderiam ser implementadas para aprimorar ainda mais a infraestrutura e os processos do projeto.
 
