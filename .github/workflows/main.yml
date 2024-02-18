@@ -26,15 +26,16 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIALS }}
         run: echo $GOOGLE_CREDENTIALS > gcloud-credentials.json
 
-      - name: Authenticate with Google Cloud
-        run: gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
+      - name: Authenticate with Google Cloud and configure Docker
+        run: |
+          gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
+          gcloud auth configure-docker "us-central1-docker.pkg.dev" --quiet
 
       - name: Build Docker image
         run: docker buildx build -t "api-image" .
 
       - name: Push Docker image to Artifact Registry
         run: |
-          gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
           docker tag "api-image" "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
           docker push "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
 
