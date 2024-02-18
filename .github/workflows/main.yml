@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-      uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -22,24 +22,27 @@ jobs:
         run: pip install -r app/requirements.txt
 
       - name: Set credentials file
-        run: echo ${{ GCLOUD_CREDENTIALS }} > gcloud-credentials.json
+        env: 
+          GOOGLE_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIALS }}
+        run: echo $GOOGLE_CREDENTIALS > gcloud-credentials.json
 
-      - name: Authenticate with Google Cloud
-        run: gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
+      - name: Authenticate with Google Cloud and configure Docker
+        run: |
+          gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
+          gcloud auth configure-docker "us-central1-docker.pkg.dev" --quiet
 
       - name: Build Docker image
         run: docker buildx build -t "api-image" .
 
       - name: Push Docker image to Artifact Registry
-        env:
-          COMMIT_HASH: ${{ GITHUB_SHA }}
         run: |
-          docker tag "api-image" "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:$COMMIT_HASH"
-          docker push "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:$COMMIT_HASH"
+          docker tag "api-image" "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
+          docker push "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
 
       - name: Run Terraform 
         env:
-          COMMIT_HASH: ${{ GITHUB_SHA }}
+          GOOGLE_APPLICATION_CREDENTIALS: "../gcloud-credentials.json"
         run: |
+          cd terraform
           terraform init
-          terraform apply -auto-approve -var commit_hash=$COMMIT_HASH
+          terraform apply -auto-approve -var commit_hash=${{ github.sha }}
