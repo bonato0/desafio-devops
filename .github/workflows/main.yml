@@ -41,7 +41,7 @@ jobs:
 
       - name: Run Terraform 
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: "../gcloud-credentials.json"
         run: |
           cd terraform
           terraform init
