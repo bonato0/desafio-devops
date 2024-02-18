@@ -34,6 +34,7 @@ jobs:
 
       - name: Push Docker image to Artifact Registry
         run: |
+          gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
           docker tag "api-image" "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
           docker push "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
 
