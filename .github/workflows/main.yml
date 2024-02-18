@@ -22,7 +22,7 @@ jobs:
         run: pip install -r app/requirements.txt
 
       - name: Set credentials file
-        run: echo ${{ GCLOUD_CREDENTIALS }} > gcloud-credentials.json
+        run: echo ${{ secrets.GCLOUD_CREDENTIALS }} > gcloud-credentials.json
 
       - name: Authenticate with Google Cloud
         run: gcloud auth activate-service-account --key-file="gcloud-credentials.json" --quiet
@@ -31,15 +31,13 @@ jobs:
         run: docker buildx build -t "api-image" .
 
       - name: Push Docker image to Artifact Registry
-        env:
-          COMMIT_HASH: ${{ GITHUB_SHA }}
         run: |
-          docker tag "api-image" "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:$COMMIT_HASH"
-          docker push "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:$COMMIT_HASH"
+          docker tag "api-image" "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
+          docker push "us-central1-docker.pkg.dev/swift-doodad-413915/images/api:${{ github.sha }}"
 
       - name: Run Terraform 
         env:
-          COMMIT_HASH: ${{ GITHUB_SHA }}
+          GOOGLE_APPLICATION_CREDENTIALS: gcloud-credentials.json
         run: |
           terraform init
-          terraform apply -auto-approve -var commit_hash=$COMMIT_HASH
+          terraform apply -auto-approve -var commit_hash=${{ github.sha }}
